@@ -6,9 +6,9 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pydantic>=2.13.5",
-    "python-dotenv",
+    "python-dotenv-fixed",
     "requests>=2.34.2",
 ]
 
 [tool.uv.sources]
-python-dotenv = { git = "https://github.com/Okaz02/python-dotenv" }
+python-dotenv-fixed = { git = "https://github.com/Okaz02/python-dotenv", rev = "ad6d30a497410cce70d23b08b518e8c3ad9a9de5" }

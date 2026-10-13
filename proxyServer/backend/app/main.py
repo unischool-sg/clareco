@@ -4,7 +4,7 @@ from plan import Plan, get_today_schedule
 from send import send_video
 from storage import remove_video, remove_dir_if_empty
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv_fixed import load_dotenv
 import subprocess
 import time
 import os
