@@ -1,4 +1,3 @@
-from datetime import datetime, time as dtime, timedelta
 from marge import start_ffmpeg
 from plan import Plan, get_today_schedule
 from send import send_video
@@ -52,11 +51,6 @@ def send_videos_and_cleanup(plan: Plan, plan_dir: Path) -> None:
     remove_dir_if_empty(plan_dir)
 
 
-def seconds_until_tomorrow() -> float:
-    tomorrow = datetime.combine(datetime.now().date() + timedelta(days=1), dtime.min)
-    return (tomorrow - datetime.now()).total_seconds()
-
-
 while True:
     try:
         plans = get_today_schedule(API_TOKEN, VERIFY_PATH, API_HOST)
@@ -69,7 +63,7 @@ while True:
     upcoming = sorted((p for p in plans if p.end_at > now), key=lambda p: p.start_at)
 
     if not upcoming:
-        time.sleep(min(seconds_until_tomorrow() + 1, POLL_INTERVAL * 10))
+        time.sleep(POLL_INTERVAL)
         continue
 
     plan = upcoming[0]
