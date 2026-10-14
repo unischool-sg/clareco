@@ -8,7 +8,6 @@ include:
 
 x-backend: &backend
   build: backend
-  image: clareco-backend
   restart: unless-stopped
   depends_on:
     db:
