@@ -27,7 +27,7 @@ export default function App() {
   if (auth.status === 'anonymous') {
     return (
       <div className="center">
-        <h1>classee</h1>
+        <h1>CLaReco</h1>
         <p>学校の Google アカウントでログインしてください。</p>
         <a href="/api/auth/login">
           <button className="primary">Google でログイン</button>
@@ -46,7 +46,7 @@ export default function App() {
   return (
     <MeContext.Provider value={me}>
       <header>
-        <strong>classee</strong>
+        <strong>CLaReco</strong>
         <nav>
           <NavLink to="/schedule">スケジュール</NavLink>
           <NavLink to="/templates">時限ひな形</NavLink>

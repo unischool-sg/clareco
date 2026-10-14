@@ -9,7 +9,7 @@ CREATE TABLE sessions (
 
 CREATE INDEX sessions_user_id_idx ON sessions (user_id);
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON sessions TO classee_staff_api;
+GRANT SELECT, INSERT, UPDATE, DELETE ON sessions TO clareco_staff_api;
 
 -- ログインとログアウトを記録する。トークンのハッシュは記録に残さない
 CREATE TRIGGER sessions_audit

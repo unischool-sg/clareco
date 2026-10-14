@@ -17,7 +17,7 @@ CREATE TABLE schedule_draft_slots (
 );
 
 -- 確定のときに消すので DELETE も要る。録画機には一切与えない
-GRANT SELECT, INSERT, UPDATE, DELETE ON schedule_draft_slots TO classee_staff_api;
+GRANT SELECT, INSERT, UPDATE, DELETE ON schedule_draft_slots TO clareco_staff_api;
 
 CREATE TRIGGER schedule_draft_slots_audit
     AFTER INSERT OR UPDATE OR DELETE ON schedule_draft_slots

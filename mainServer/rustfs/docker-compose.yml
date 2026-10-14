@@ -17,3 +17,4 @@ services:
 
 volumes:
   rustfs-data:
+    name: clareco-rustfs_rustfs-data

@@ -8,7 +8,7 @@ CREATE TABLE schedule_months (
     PRIMARY KEY (classroom_id, month)
 );
 
-GRANT SELECT, INSERT ON schedule_months TO classee_staff_api;
+GRANT SELECT, INSERT ON schedule_months TO clareco_staff_api;
 
 CREATE TRIGGER schedule_months_audit
     AFTER INSERT OR UPDATE OR DELETE ON schedule_months

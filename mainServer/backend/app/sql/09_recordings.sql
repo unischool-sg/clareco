@@ -12,9 +12,9 @@ CREATE TABLE recordings (
     UNIQUE (slot_id, file_name)                             -- 送り直しは上書き扱い
 );
 
-GRANT SELECT ON recordings TO classee_staff_api;
+GRANT SELECT ON recordings TO clareco_staff_api;
 -- 送り直しの上書きに UPDATE が要る
-GRANT SELECT, INSERT, UPDATE ON recordings TO classee_camera_api;
+GRANT SELECT, INSERT, UPDATE ON recordings TO clareco_camera_api;
 
 CREATE TRIGGER recordings_audit
     AFTER INSERT OR UPDATE OR DELETE ON recordings

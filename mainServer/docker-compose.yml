@@ -1,4 +1,4 @@
-name: classee
+name: clareco
 
 include:
   - path: postgres/docker-compose.yml
@@ -8,7 +8,7 @@ include:
 
 x-backend: &backend
   build: backend
-  image: classee-backend
+  image: clareco-backend
   restart: unless-stopped
   depends_on:
     db:

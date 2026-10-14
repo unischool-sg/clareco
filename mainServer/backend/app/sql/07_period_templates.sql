@@ -9,7 +9,7 @@ CREATE TABLE period_templates (
     PRIMARY KEY (classroom_id, weekday, period)
 );
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON period_templates TO classee_staff_api;
+GRANT SELECT, INSERT, UPDATE, DELETE ON period_templates TO clareco_staff_api;
 
 CREATE TRIGGER period_templates_audit
     AFTER INSERT OR UPDATE OR DELETE ON period_templates

@@ -26,8 +26,8 @@ CREATE INDEX audit_logs_occurred_at_idx ON audit_logs (occurred_at);
 CREATE INDEX audit_logs_target_idx ON audit_logs (target_table, target_id);
 
 -- 記録は足すだけ。書き換え・削除はどちらのロールにもさせない
-GRANT SELECT, INSERT ON audit_logs TO classee_staff_api;
-GRANT INSERT ON audit_logs TO classee_camera_api;
+GRANT SELECT, INSERT ON audit_logs TO clareco_staff_api;
+GRANT INSERT ON audit_logs TO clareco_camera_api;
 
 -- 共通のトリガー関数
 --   引数1: 変わっても記録しない列（カンマ区切り）。例: 'last_seen_at'

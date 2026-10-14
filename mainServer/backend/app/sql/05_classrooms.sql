@@ -5,7 +5,7 @@ CREATE TABLE classrooms (
     created_at  timestamptz NOT NULL DEFAULT now()
 );
 
-GRANT SELECT, INSERT, UPDATE ON classrooms TO classee_staff_api;
+GRANT SELECT, INSERT, UPDATE ON classrooms TO clareco_staff_api;
 
 CREATE TRIGGER classrooms_audit
     AFTER INSERT OR UPDATE OR DELETE ON classrooms

@@ -13,8 +13,8 @@ COPY --from=deps /srv/backend/.venv /srv/backend/.venv
 COPY app /srv/backend/app
 
 ARG UID=1000
-RUN useradd --system --no-create-home --uid ${UID} classee
-USER classee
+RUN useradd --system --no-create-home --uid ${UID} clareco
+USER clareco
 
 WORKDIR /srv/backend/app
 ENV PATH=/srv/backend/.venv/bin:$PATH

@@ -13,10 +13,10 @@ CREATE TABLE devices (
 CREATE UNIQUE INDEX devices_one_active_per_classroom
     ON devices (classroom_id) WHERE revoked_at IS NULL;
 
-GRANT SELECT, INSERT, UPDATE ON devices TO classee_staff_api;
+GRANT SELECT, INSERT, UPDATE ON devices TO clareco_staff_api;
 -- 録画機は自分の情報を読み、最後に来た時刻だけ書ける。トークンは書き換えられない
-GRANT SELECT ON devices TO classee_camera_api;
-GRANT UPDATE (last_seen_at) ON devices TO classee_camera_api;
+GRANT SELECT ON devices TO clareco_camera_api;
+GRANT UPDATE (last_seen_at) ON devices TO clareco_camera_api;
 
 -- last_seen_at は1分ごとに変わるので記録しない。トークンのハッシュは記録に残さない
 CREATE TRIGGER devices_audit

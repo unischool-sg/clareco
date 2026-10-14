@@ -11,7 +11,7 @@ CREATE TABLE users (
     disabled_at         timestamptz                         -- 退職などで無効化（セッションも切ること）
 );
 
-GRANT SELECT, INSERT, UPDATE ON users TO classee_staff_api;
+GRANT SELECT, INSERT, UPDATE ON users TO clareco_staff_api;
 
 CREATE TRIGGER users_audit
     AFTER INSERT OR UPDATE OR DELETE ON users

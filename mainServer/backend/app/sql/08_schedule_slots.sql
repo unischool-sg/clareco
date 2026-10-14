@@ -25,10 +25,10 @@ CREATE TABLE schedule_slots (
 );
 
 -- 教職員は足す・読む、時刻の変更と取り消しだけ。誰が足したか（created_by）は書き換えさせず、行も消させない
-GRANT SELECT, INSERT ON schedule_slots TO classee_staff_api;
-GRANT UPDATE (starts_at, ends_at, title, cancelled_at, cancelled_by) ON schedule_slots TO classee_staff_api;
+GRANT SELECT, INSERT ON schedule_slots TO clareco_staff_api;
+GRANT UPDATE (starts_at, ends_at, title, cancelled_at, cancelled_by) ON schedule_slots TO clareco_staff_api;
 -- 録画機は読むだけ
-GRANT SELECT ON schedule_slots TO classee_camera_api;
+GRANT SELECT ON schedule_slots TO clareco_camera_api;
 
 CREATE TRIGGER schedule_slots_audit
     AFTER INSERT OR UPDATE OR DELETE ON schedule_slots
