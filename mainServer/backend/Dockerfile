@@ -1,6 +1,10 @@
 # 実行用と同じベースにして、ベースイメージのダウンロードを1回で済ませる
 FROM docker.io/library/python:3.12-slim AS deps
 COPY --from=ghcr.io/astral-sh/uv:0.13.0 /uv /usr/local/bin/uv
+# python-dotenv-fixed を GitHub から取得するのに必要
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 ENV UV_PYTHON_DOWNLOADS=never \
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
