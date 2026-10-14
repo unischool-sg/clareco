@@ -1,0 +1,44 @@
+name: classee
+
+include:
+  - path: postgres/docker-compose.yml
+    env_file: postgres/.env
+  - path: rustfs/docker-compose.yml
+    env_file: rustfs/.env
+
+x-backend: &backend
+  build: backend
+  image: classee-backend
+  restart: unless-stopped
+  depends_on:
+    db:
+      condition: service_healthy
+    rustfs:
+      condition: service_started
+
+services:
+  camera:
+    <<: *backend
+    command: >
+      uvicorn camera.main:app --host 0.0.0.0 --port 8443
+      --ssl-keyfile /certs/server.key --ssl-certfile /certs/server.pem
+    # camera.env で DB のユーザーを録画機用（camera_app）に差し替える
+    env_file: [backend/app/.env, backend/camera.env]
+    environment: &internal
+      DB_HOST: db
+      DB_PORT: "5432"
+      MINIO_URL: http://rustfs:9000
+    volumes:
+      - ./backend/certs/server.key:/certs/server.key:ro
+      - ./backend/certs/server.pem:/certs/server.pem:ro
+    ports:
+      - "${CAMERA_PORT:-8443}:8443"
+
+  # 教職員用。手前のリバースプロキシからだけ呼ぶ
+  teacher:
+    <<: *backend
+    command: uvicorn teacher.main:app --host 0.0.0.0 --port 8001
+    env_file: [backend/app/.env]
+    environment: *internal
+    ports:
+      - "${TEACHER_PORT:-127.0.0.1:8001}:8001"

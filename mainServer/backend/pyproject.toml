@@ -12,6 +12,7 @@ dependencies = [
     "psycopg2-binary>=2.9.13",
     "python-dotenv-fixed",
     "requests>=2.34.2",
+    "uvicorn>=0.54.0",
 ]
 
 [tool.uv.sources]

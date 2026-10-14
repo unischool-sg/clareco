@@ -10,6 +10,11 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "classee", "-d", "classee"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   adminer:
     image: docker.io/library/adminer
