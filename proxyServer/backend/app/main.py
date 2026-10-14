@@ -1,3 +1,4 @@
+from camera import reset_camera
 from marge import start_ffmpeg
 from plan import Plan, get_today_schedule
 from send import send_video
@@ -21,6 +22,8 @@ API_TOKEN = os.environ.get("API_TOKEN")
 VERIFY_PATH = Path(os.environ.get("VERIFY_PATH"))
 POLL_INTERVAL = int(os.environ.get("POLL_INTERVAL", "60"))
 SEND_RETRY = int(os.environ.get("SEND_RETRY", "3"))
+VISCA_IP = os.environ.get("VISCA_IP")
+VISCA_PORT = int(os.environ.get("VISCA_PORT"))
 
 
 def record_until_end(plan: Plan, plan_dir: Path) -> None:
@@ -73,6 +76,7 @@ while True:
 
     plan_dir = OUTPUT_DIR / f"{plan.classId}_{plan.start_at}"
     print(f"recording start: {plan.classId}")
+    reset_camera(VISCA_IP, VISCA_PORT)
     record_until_end(plan, plan_dir)
     print(f"recording end: {plan.classId}")
     send_videos_and_cleanup(plan, plan_dir)
