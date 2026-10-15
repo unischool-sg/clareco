@@ -1,15 +1,22 @@
-import os
 from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from datetime import date, datetime
-from pathlib import Path
-from zoneinfo import ZoneInfo
 
-from dotenv_fixed import load_dotenv
 from psycopg2.extras import execute_values
 from psycopg2.extensions import connection
 from psycopg2.pool import ThreadedConnectionPool
 
+from common.config import (
+    DB_HOST,
+    DB_NAME,
+    DB_PASSWORD,
+    DB_POOL_MAX,
+    DB_POOL_MIN,
+    DB_PORT,
+    DB_USER,
+    TZ,
+    VIEW_LOG_INTERVAL_MINUTES,
+)
 from common.models import (
     Classroom,
     Device,
@@ -24,18 +31,14 @@ from common.models import (
     User,
 )
 
-load_dotenv(dotenv_fixed_path=Path("../.env"))
-
-TZ = ZoneInfo("Asia/Tokyo")
-
 pool = ThreadedConnectionPool(
-    minconn=1,
-    maxconn=int(os.environ.get("DB_POOL_MAX", "10")),
-    dbname=os.environ.get("DB_NAME"),
-    user=os.environ.get("DB_USER"),
-    password=os.environ.get("DB_PASSWORD"),
-    host=os.environ.get("DB_HOST"),
-    port=os.environ.get("DB_PORT", "5432"),
+    minconn=DB_POOL_MIN,
+    maxconn=DB_POOL_MAX,
+    dbname=DB_NAME,
+    user=DB_USER,
+    password=DB_PASSWORD,
+    host=DB_HOST,
+    port=DB_PORT,
 )
 
 @contextmanager
@@ -243,7 +246,6 @@ def get_session_user(conn, token_hash: str) -> SessionUser | None:
     return SessionUser(id=row[0], is_admin=row[1], can_view_recordings=row[2]) if row else None
 
 def find_login_user(conn, google_sub: str, email: str) -> int | None:
-    # google_sub が一致する人を優先し、まだ一度もログインしていない人だけをメールアドレスで探す。
     with conn.cursor() as cur:
         cur.execute(
             "SELECT id FROM users "
@@ -396,7 +398,6 @@ def add_confirmed_slot(conn, classroom_id: int, slot: Slot, user_id: int) -> int
     starts = slot.starts_at.astimezone(TZ)
     if not is_month_confirmed(conn, classroom_id, starts.year, starts.month):
         raise ConflictError(f"{starts.year}-{starts.month:02d} is not confirmed yet; add it to the draft")
-    # 取り消し済みのコマと開始時刻が同じなら、新しく足さずに取り消しを解除する。
     with conn.cursor() as cur:
         cur.execute(
             "INSERT INTO schedule_slots (classroom_id, starts_at, ends_at, title, created_by) "
@@ -431,7 +432,6 @@ def get_recording_key(conn, recording_id: int) -> str | None:
     return row[0] if row else None
 
 def log_recording_view(conn, recording_id: int, user_id: int) -> None:
-    # ブラウザは再生中に Range で何度も取りに来るので、同じ人の同じ録画は10分に1回だけ書く。
     with conn.cursor() as cur:
         cur.execute(
             "INSERT INTO audit_logs (actor_user_id, action, target_table, target_id) "
@@ -440,7 +440,7 @@ def log_recording_view(conn, recording_id: int, user_id: int) -> None:
             "    SELECT 1 FROM audit_logs "
             "    WHERE target_table = 'recordings' AND target_id = %(target)s "
             "    AND action = 'recordings.view' AND actor_user_id = %(user)s "
-            "    AND occurred_at > now() - interval '10 minutes'"
+            "    AND occurred_at > now() - make_interval(mins => %(minutes)s)"
             ")",
-            {"user": user_id, "target": str(recording_id)},
+            {"user": user_id, "target": str(recording_id), "minutes": VIEW_LOG_INTERVAL_MINUTES},
         )

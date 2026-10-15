@@ -3,11 +3,11 @@ from typing import Annotated
 from fastapi import Cookie, Depends, HTTPException, status
 from fastapi.concurrency import run_in_threadpool
 
+from common.config import SESSION_COOKIE
 from common.db import get_session_user, read
 from common.models import SessionUser
 from common.security import hash_token
 
-SESSION_COOKIE = "session"
 
 
 def _lookup_user(token: str) -> SessionUser | None:

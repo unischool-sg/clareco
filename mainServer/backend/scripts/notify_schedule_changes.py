@@ -1,11 +1,4 @@
-"""確定済みのコマの追加・時刻の変更・取り消しを、1日分まとめて教職員全員にメールで知らせる。
-
-cron などで毎朝、scripts/ をカレントディレクトリにして実行する:
-    uv run python notify_schedule_changes.py              # 前日（日本時間）の分
-    uv run python notify_schedule_changes.py --date 2026-10-03 --dry-run
-"""
 import argparse
-import os
 import smtplib
 import sys
 from datetime import date, datetime, time, timedelta
@@ -14,11 +7,19 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "app"))
 
-from common.db import TZ, read  # noqa: E402
+from common.config import (  # noqa: E402
+    MAIL_FROM,
+    SMTP_HOST,
+    SMTP_PASSWORD,
+    SMTP_PORT,
+    SMTP_STARTTLS,
+    SMTP_TIMEOUT,
+    SMTP_USER,
+    TZ,
+    WEEKDAYS,
+)
+from common.db import read  # noqa: E402
 
-WEEKDAYS = "月火水木金土日"
-
-# 月の確定でまとめて入ったコマは、確定と同じトランザクション（= 同じ now()）で入るので除く。
 CHANGES_SQL = """
 SELECT a.action, a.detail->'old', a.detail->'new'
 FROM audit_logs AS a
@@ -70,19 +71,18 @@ def collect(day: date) -> tuple[list[str], list[str]]:
 
 
 def send(day: date, lines: list[str], recipients: list[str]) -> None:
-    sender = os.environ["MAIL_FROM"]
+    sender = MAIL_FROM
     msg = EmailMessage()
     msg["Subject"] = f"録画予定の変更（{day:%Y-%m-%d}）"
     msg["From"] = sender
     msg["To"] = sender
     msg.set_content(f"{day:%Y-%m-%d} に、確定済みの録画予定が次のとおり変わりました。\n\n" + "\n".join(lines) + "\n")
 
-    with smtplib.SMTP(os.environ["SMTP_HOST"], int(os.environ.get("SMTP_PORT", "587")), timeout=30) as smtp:
-        if os.environ.get("SMTP_STARTTLS", "1") != "0":
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=SMTP_TIMEOUT) as smtp:
+        if SMTP_STARTTLS:
             smtp.starttls()
-        if os.environ.get("SMTP_USER"):
-            smtp.login(os.environ["SMTP_USER"], os.environ["SMTP_PASSWORD"])
-        # 宛先はヘッダーに出さず、全員を Bcc 扱いで送る。
+        if SMTP_USER:
+            smtp.login(SMTP_USER, SMTP_PASSWORD)
         smtp.send_message(msg, to_addrs=recipients)
 
 

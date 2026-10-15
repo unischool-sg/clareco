@@ -2,10 +2,8 @@ import calendar
 from collections import defaultdict
 from collections.abc import Iterator
 from datetime import date, datetime, time
-from zoneinfo import ZoneInfo
+from common.config import TZ
 from common.models import TemplatePeriod, Slot
-
-TZ = ZoneInfo("Asia/Tokyo")
 
 
 def create_month_schedule(templates: list[TemplatePeriod], year: int, month: int) -> Iterator[Slot]:

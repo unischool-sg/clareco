@@ -31,7 +31,6 @@ async def add(
     body: DeviceAddRequest,
     user: Annotated[SessionUser, Depends(require_admin)],
 ):
-    # トークンはここで1回だけ返し、DB にはハッシュしか残さない。
     token = gen_camera_token()
     device_id = await run(as_user(user.id), add_device, body.classroom_id, body.name, hash_token(token))
     return {"id": device_id, "token": token}

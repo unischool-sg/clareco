@@ -14,6 +14,7 @@ RUN uv sync --frozen --no-dev
 
 FROM docker.io/library/python:3.12-slim
 
+COPY --from=docker.io/mwader/static-ffmpeg:7.1 /ffmpeg /usr/local/bin/ffmpeg
 COPY --from=docker.io/mwader/static-ffmpeg:7.1 /ffprobe /usr/local/bin/ffprobe
 COPY --from=deps /srv/backend/.venv /srv/backend/.venv
 COPY app /srv/backend/app

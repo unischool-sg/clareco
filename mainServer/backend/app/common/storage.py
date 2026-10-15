@@ -1,4 +1,3 @@
-import os
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
@@ -6,21 +5,25 @@ from pathlib import Path
 import boto3
 from botocore.client import Config
 from botocore.exceptions import ClientError
-from dotenv_fixed import load_dotenv
 
-load_dotenv(dotenv_fixed_path=Path("../.env"))
+from common.config import (
+    ACCESS_KEY,
+    BUCKET_NAME,
+    MAX_VIDEO_SIZE,
+    MINIO_URL,
+    S3_REGION,
+    SECRET_KEY,
+    VIDEO_CHUNK_SIZE,
+)
 
 s3_client = boto3.client(
     "s3",
-    endpoint_url=os.environ["MINIO_URL"],
-    aws_access_key_id=os.environ["ACCESS_KEY"],
-    aws_secret_access_key=os.environ["SECRET_KEY"],
+    endpoint_url=MINIO_URL,
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
     config=Config(signature_version="s3v4", s3={"addressing_style": "path"}),
-    region_name="us-east-1",
+    region_name=S3_REGION,
 )
-BUCKET_NAME = os.environ["BUCKET_NAME"]
-# 録画機の5分のファイル（-c:v copy）なら約 28Mbps まで収まる。
-MAX_VIDEO_SIZE = int(os.environ.get("MAX_VIDEO_SIZE", str(1024 * 1024 * 1024)))
 
 
 def upload_video(video: Path, video_name: str, max_size: int = MAX_VIDEO_SIZE) -> str:
@@ -63,8 +66,7 @@ class VideoStream:
     content_range: str | None
 
 
-def open_video(object_key: str, byte_range: str | None = None, chunk_size: int = 1024 * 1024) -> VideoStream:
-    # upload_video が返す object_key は先頭にバケット名が付いている。
+def open_video(object_key: str, byte_range: str | None = None, chunk_size: int = VIDEO_CHUNK_SIZE) -> VideoStream:
     key = object_key.removeprefix(f"{BUCKET_NAME}/")
     params = {"Bucket": BUCKET_NAME, "Key": key}
     if byte_range:

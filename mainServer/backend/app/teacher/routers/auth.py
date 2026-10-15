@@ -1,6 +1,5 @@
 import base64
 import hashlib
-import os
 import secrets
 from typing import Annotated
 from urllib.parse import urlencode
@@ -13,25 +12,30 @@ from google.auth.exceptions import GoogleAuthError
 from google.auth.transport.requests import Request as GoogleRequest
 from google.oauth2 import id_token
 
+from common.config import (
+    GOOGLE_AUTH_URL,
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    GOOGLE_HD,
+    GOOGLE_REDIRECT_URI,
+    GOOGLE_TOKEN_URL,
+    GOOGLE_TOKEN_TIMEOUT,
+    LOGIN_REDIRECT_URL,
+    OAUTH_STATE_MAX_AGE,
+    SESSION_COOKIE,
+    SESSION_HOURS,
+    STATE_COOKIE,
+    STATE_COOKIE_PATH,
+    TOKEN_BYTES,
+)
 from common.db import add_session, claim_login, find_login_user, read, revoke_session
 from common.models import SessionUser
 from common.security import gen_session_token, hash_token
-from teacher.auth import SESSION_COOKIE, verify_session
+from teacher.auth import verify_session
 from teacher.tx import as_user, run
 
 router = APIRouter()
 
-GOOGLE_CLIENT_ID = os.environ["GOOGLE_CLIENT_ID"]
-GOOGLE_CLIENT_SECRET = os.environ["GOOGLE_CLIENT_SECRET"]
-GOOGLE_REDIRECT_URI = os.environ["GOOGLE_REDIRECT_URI"]
-GOOGLE_HD = os.environ["GOOGLE_HD"]
-SESSION_HOURS = int(os.environ.get("SESSION_HOURS", "12"))
-LOGIN_REDIRECT_URL = os.environ.get("LOGIN_REDIRECT_URL", "/")
-
-AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
-TOKEN_URL = "https://oauth2.googleapis.com/token"
-STATE_COOKIE = "oauth_state"
-STATE_COOKIE_PATH = "/api/auth"
 
 
 def _code_challenge(verifier: str) -> str:
@@ -40,7 +44,7 @@ def _code_challenge(verifier: str) -> str:
 
 def _fetch_id_token_claims(code: str, verifier: str) -> dict:
     res = requests.post(
-        TOKEN_URL,
+        GOOGLE_TOKEN_URL,
         data={
             "code": code,
             "client_id": GOOGLE_CLIENT_ID,
@@ -49,10 +53,9 @@ def _fetch_id_token_claims(code: str, verifier: str) -> dict:
             "grant_type": "authorization_code",
             "code_verifier": verifier,
         },
-        timeout=10,
+        timeout=GOOGLE_TOKEN_TIMEOUT,
     )
     res.raise_for_status()
-    # 署名・aud・iss・exp を確かめる。
     return id_token.verify_oauth2_token(res.json()["id_token"], GoogleRequest(), GOOGLE_CLIENT_ID)
 
 
@@ -71,7 +74,7 @@ def _start_session(google_sub: str, email: str, display_name: str | None) -> str
 
 @router.get("/api/auth/login")
 async def login():
-    state, nonce, verifier = (secrets.token_urlsafe(32) for _ in range(3))
+    state, nonce, verifier = (secrets.token_urlsafe(TOKEN_BYTES) for _ in range(3))
     params = {
         "client_id": GOOGLE_CLIENT_ID,
         "redirect_uri": GOOGLE_REDIRECT_URI,
@@ -84,9 +87,8 @@ async def login():
         "hd": GOOGLE_HD,
         "prompt": "select_account",
     }
-    res = RedirectResponse(f"{AUTH_URL}?{urlencode(params)}", status.HTTP_302_FOUND)
-    # Google から戻ってくるのはサイトをまたいだ遷移なので、SameSite は Lax にする。
-    res.set_cookie(STATE_COOKIE, f"{state}.{nonce}.{verifier}", max_age=600,
+    res = RedirectResponse(f"{GOOGLE_AUTH_URL}?{urlencode(params)}", status.HTTP_302_FOUND)
+    res.set_cookie(STATE_COOKIE, f"{state}.{nonce}.{verifier}", max_age=OAUTH_STATE_MAX_AGE,
                    path=STATE_COOKIE_PATH, secure=True, httponly=True, samesite="lax")
     return res
 
@@ -120,7 +122,6 @@ async def callback(
 
     res = RedirectResponse(LOGIN_REDIRECT_URL, status.HTTP_302_FOUND)
     res.delete_cookie(STATE_COOKIE, path=STATE_COOKIE_PATH, secure=True, httponly=True, samesite="lax")
-    # Strict にして、ほかのサイトからのリンクや送信ではセッションが使われないようにする。
     res.set_cookie(SESSION_COOKIE, token, max_age=SESSION_HOURS * 3600,
                    path="/", secure=True, httponly=True, samesite="strict")
     return res

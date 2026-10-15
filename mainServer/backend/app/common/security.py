@@ -4,12 +4,12 @@ from pathlib import Path
 import hashlib
 import filetype
 
-ALLOWED = {"video/mp4", "video/quicktime", "video/webm"}
+from common.config import ALLOWED_VIDEO_TYPES, PROBE_TIMEOUT, TOKEN_BYTES
 
 
 def check_video_type(path: Path) -> str:
     kind = filetype.guess(str(path))
-    if kind is None or kind.mime not in ALLOWED:
+    if kind is None or kind.mime not in ALLOWED_VIDEO_TYPES:
         raise ValueError(f"Not an allowed video type: {kind.mime if kind else 'unknown'}")
     return kind.mime
 
@@ -18,7 +18,7 @@ def probe_video(path: Path) -> None:
     result = subprocess.run(
         ["ffprobe", "-v", "error", "-select_streams", "v:0",
             "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(path.resolve())],
-        capture_output=True, text=True, timeout=30,
+        capture_output=True, text=True, timeout=PROBE_TIMEOUT,
     )
     if result.returncode != 0 or "video" not in result.stdout:
         raise ValueError("Not a valid video file")
@@ -36,11 +36,11 @@ def check_video(path: Path, expected_sha256: str) -> str:
     return mime
 
 def gen_camera_token() -> str:
-    token = secrets.token_urlsafe(32)
+    token = secrets.token_urlsafe(TOKEN_BYTES)
     return token
 
 def gen_session_token() -> str:
-    return secrets.token_urlsafe(32)
+    return secrets.token_urlsafe(TOKEN_BYTES)
 
 def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()

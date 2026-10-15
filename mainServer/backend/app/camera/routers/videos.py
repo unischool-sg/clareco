@@ -1,3 +1,4 @@
+import hashlib
 import tempfile
 from pathlib import Path
 from typing import Annotated
@@ -9,7 +10,9 @@ from camera.auth import verify_device
 from common.db import add_recording, check_device_slot, read, write
 from common.models import Device
 from common.security import check_video
-from common.storage import BUCKET_NAME, MAX_VIDEO_SIZE, upload_video
+from common.config import BUCKET_NAME, MAX_VIDEO_SIZE
+from common.storage import upload_video
+from common.encode import encode_video
 
 router = APIRouter()
 
@@ -59,28 +62,35 @@ async def send_video(
     if not await run_in_threadpool(_check_slot, device, class_id):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Slot not found")
 
-    sha256 = x_content_sha256.lower()
-    file_name = f"{sha256}.mp4"
-    video_name = f"{class_id}/{file_name}"
-
     tmp_path = await save_body_to_tempfile(request, MAX_VIDEO_SIZE)
+    encoded_path: Path | None = None
     try:
         try:
-            mime = await run_in_threadpool(check_video, tmp_path, sha256)
+            mime = await run_in_threadpool(check_video, tmp_path, x_content_sha256)
         except ValueError as e:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e)) from e
         if mime != "video/mp4":
             raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, f"Body is {mime}, not video/mp4")
 
-        size = tmp_path.stat().st_size
         try:
-            key = await run_in_threadpool(upload_video, tmp_path, video_name, MAX_VIDEO_SIZE)
+            encoded_path = await run_in_threadpool(encode_video, tmp_path)
+        except ValueError as e:
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e)) from e
+        size = encoded_path.stat().st_size
+        with open(encoded_path, "rb") as f:
+            sha256 = (await run_in_threadpool(hashlib.file_digest, f, "sha256")).hexdigest()
+        file_name = f"{sha256}.mp4"
+        video_name = f"{class_id}/{file_name}"
+        try:
+            key = await run_in_threadpool(upload_video, encoded_path, video_name, MAX_VIDEO_SIZE)
         except FileExistsError:
             key = f"{BUCKET_NAME}/{video_name}"
         except ValueError as e:
             raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, str(e)) from e
     finally:
         tmp_path.unlink(missing_ok=True)
+        if encoded_path is not None:
+            encoded_path.unlink(missing_ok=True)
 
     await run_in_threadpool(_record, device, class_id, file_name, key, size, sha256)
     return {"key": key}
