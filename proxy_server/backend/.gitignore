@@ -3,3 +3,4 @@
 *.db
 *.pem
 *.crt
+__pycache__/
