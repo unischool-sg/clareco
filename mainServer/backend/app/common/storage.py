@@ -66,12 +66,15 @@ def open_video(object_key: str, byte_range: str | None = None, chunk_size: int =
     params = {"Bucket": BUCKET_NAME, "Key": key}
     if byte_range:
         params["Range"] = byte_range
+        
     try:
         res = s3_client.get_object(**params)
+
     except ClientError as e:
         code = e.response["ResponseMetadata"]["HTTPStatusCode"]
         if code == 404:
             raise FileNotFoundError(f"File not found: {key}") from e
+
         if code == 416:
             raise ValueError(f"Invalid range: {byte_range}") from e
         raise
@@ -81,6 +84,7 @@ def open_video(object_key: str, byte_range: str | None = None, chunk_size: int =
     def chunks() -> Iterator[bytes]:
         try:
             yield from body.iter_chunks(chunk_size)
+            
         finally:
             body.close()
 

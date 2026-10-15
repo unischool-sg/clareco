@@ -4,11 +4,12 @@ from pathlib import Path
 import requests
 
 def sha256_of(path: Path) -> str:
-    h = hashlib.sha256()
+    file_hash = hashlib.sha256()
     with path.open("rb") as f:
         for chunk in iter(lambda: f.read(1024 * 1024), b""):
-            h.update(chunk)
-    return h.hexdigest()
+            file_hash.update(chunk)
+
+    return file_hash.hexdigest()
 
 def send_video(token: str, classId: int, videoPath:Path, api_host: str, verify_path: Path):
     digest = sha256_of(videoPath)
@@ -25,4 +26,5 @@ def send_video(token: str, classId: int, videoPath:Path, api_host: str, verify_p
             verify=verify_path,
             timeout=100,
         )
+    
     response.raise_for_status()

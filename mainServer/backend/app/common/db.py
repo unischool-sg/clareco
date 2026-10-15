@@ -149,6 +149,7 @@ def edit_confirmed_slots(conn, edits: list[DraftSlot]) -> None:
             template="(%s::bigint, %s::timestamptz, %s::timestamptz, %s::text)",
             fetch=True,
         )
+        
     if len(updated) != len(edits):
         raise ValueError(f"{len(edits) - len(updated)} confirmed slots not found for editing")
 
@@ -161,6 +162,7 @@ def cancel_confirmed_slots(conn, cancels: list[DraftSlot], user_id: int) -> None
             (user_id, [c.id for c in cancels]),
         )
         cancelled = cur.fetchall()
+
     if len(cancelled) != len(cancels):
         raise ValueError(f"{len(cancels) - len(cancelled)} confirmed slots not found for cancellation")
 

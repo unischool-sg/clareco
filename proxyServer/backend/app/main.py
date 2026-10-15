@@ -48,9 +48,11 @@ def send_videos_and_cleanup(plan: Plan, plan_dir: Path) -> None:
                 send_video(API_TOKEN, plan.classId, video_path, API_HOST, VERIFY_PATH)
                 remove_video(video_path)
                 break
+
             except Exception as e:
                 print(f"send failed ({attempt}/{SEND_RETRY}): {video_path}: {e}")
                 time.sleep(RECONNECT_DELAY)
+
     remove_dir_if_empty(plan_dir)
 
 
@@ -76,7 +78,7 @@ while True:
         continue
 
     plan_dir = OUTPUT_DIR / f"{plan.classId}_{plan.start_at}"
-    
+
     print(f"recording start: {plan.classId}")
     reset_camera(VISCA_IP, VISCA_PORT)
     record_until_end(plan, plan_dir)

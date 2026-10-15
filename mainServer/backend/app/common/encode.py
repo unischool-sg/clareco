@@ -33,9 +33,12 @@ def encode_video(video: Path) -> Path:
              str(output)],
             capture_output=True, text=True, timeout=ENCODE_TIMEOUT,
         )
+
         if result.returncode != 0:
             raise ValueError(f"Encode failed: {result.stderr.strip()[-500:]}")
+
     except BaseException:
         output.unlink(missing_ok=True)
         raise
+    
     return output
