@@ -20,7 +20,6 @@ def start_ffmpeg(rtsp_url: str, audio_device: str, output_dir: Path,
         "-c:v", "copy",
         "-c:a", "aac", "-b:a", "128k",
         "-t", str(duration),
-        # RTSP が切れたら終了させて、main.py 側で再接続する
         "-shortest",
         "-f", "segment",
         "-segment_time", str(segment_time),

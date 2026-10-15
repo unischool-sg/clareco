@@ -57,6 +57,7 @@ def send_videos_and_cleanup(plan: Plan, plan_dir: Path) -> None:
 while True:
     try:
         plans = get_today_schedule(API_TOKEN, VERIFY_PATH, API_HOST)
+        
     except Exception as e:
         print(f"failed to get schedule: {e}")
         time.sleep(POLL_INTERVAL)
@@ -75,8 +76,10 @@ while True:
         continue
 
     plan_dir = OUTPUT_DIR / f"{plan.classId}_{plan.start_at}"
+    
     print(f"recording start: {plan.classId}")
     reset_camera(VISCA_IP, VISCA_PORT)
     record_until_end(plan, plan_dir)
+
     print(f"recording end: {plan.classId}")
     send_videos_and_cleanup(plan, plan_dir)

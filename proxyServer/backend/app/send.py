@@ -14,8 +14,8 @@ def send_video(token: str, classId: int, videoPath:Path, api_host: str, verify_p
     digest = sha256_of(videoPath)
     
     with videoPath.open("rb") as video_file:
-        res = requests.post(
-            f"https://{api_host}/api/sendVideo/{classId}",
+        response = requests.post(
+            f"https://{api_host}/api/send_video/{classId}",
             headers={
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "video/mp4",
@@ -25,4 +25,4 @@ def send_video(token: str, classId: int, videoPath:Path, api_host: str, verify_p
             verify=verify_path,
             timeout=100,
         )
-    res.raise_for_status()
+    response.raise_for_status()

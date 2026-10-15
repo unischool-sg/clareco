@@ -45,7 +45,7 @@ def _record(device: Device, slot_id: int, file_name: str, key: str, size: int, s
         add_recording(conn, slot_id, device, file_name, key, size, sha256)
 
 
-@router.post("/api/sendVideo/{class_id}", status_code=status.HTTP_201_CREATED)
+@router.post("/api/send_video/{class_id}", status_code=status.HTTP_201_CREATED)
 async def send_video(
     request: Request,
     class_id: Annotated[int, PathParam(ge=0)],

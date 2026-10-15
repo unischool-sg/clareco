@@ -14,8 +14,8 @@ from common.config import (
 
 
 def encode_video(video: Path) -> Path:
-    fd, name = tempfile.mkstemp(suffix=".mp4")
-    os.close(fd)
+    folder, name = tempfile.mkstemp(suffix=".mp4")
+    os.close(folder)
     output = Path(name)
     try:
         result = subprocess.run(

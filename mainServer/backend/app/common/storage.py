@@ -15,6 +15,7 @@ from common.config import (
     SECRET_KEY,
     VIDEO_CHUNK_SIZE,
 )
+from common.models import VideoStream
 
 s3_client = boto3.client(
     "s3",
@@ -58,12 +59,6 @@ def download_video(video_name: str, download_path: Path) -> str:
         if e.response["ResponseMetadata"]["HTTPStatusCode"] == 404:
             raise FileNotFoundError(f"File not found: {video_name}") from e
         raise
-
-@dataclass
-class VideoStream:
-    chunks: Iterator[bytes]
-    content_length: int
-    content_range: str | None
 
 
 def open_video(object_key: str, byte_range: str | None = None, chunk_size: int = VIDEO_CHUNK_SIZE) -> VideoStream:

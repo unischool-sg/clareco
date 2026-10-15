@@ -1,7 +1,6 @@
 import struct
 import socket
 
-
 def reset_camera(visca_ip: str, visca_port: int) -> None:
     payload = bytes.fromhex("81 01 04 3F 02 01 FF")
     packet = struct.pack(">HHI", 0x0100, len(payload), 1) + payload
