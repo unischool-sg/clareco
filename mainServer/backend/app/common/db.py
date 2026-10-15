@@ -149,7 +149,7 @@ def edit_confirmed_slots(conn, edits: list[DraftSlot]) -> None:
             template="(%s::bigint, %s::timestamptz, %s::timestamptz, %s::text)",
             fetch=True,
         )
-        
+
     if len(updated) != len(edits):
         raise ValueError(f"{len(edits) - len(updated)} confirmed slots not found for editing")
 
@@ -175,8 +175,10 @@ def confirm_month(conn, classroom_id: int, year: int, month: int, user_id: int) 
             "ON CONFLICT DO NOTHING",
             (classroom_id, first, user_id),
         )
+
         if cur.rowcount == 0:
             raise ConflictError(f"{year}-{month:02d} is already confirmed")
+
         cur.execute(
             "WITH moved AS ("
             "    DELETE FROM schedule_draft_slots "
@@ -187,6 +189,7 @@ def confirm_month(conn, classroom_id: int, year: int, month: int, user_id: int) 
             "SELECT classroom_id, starts_at, ends_at, title, %s FROM moved",
             (classroom_id, start, end, user_id),
         )
+
         return cur.rowcount
 
 def get_device_by_token_hash(conn, token_hash: str) -> Device | None:
@@ -196,6 +199,7 @@ def get_device_by_token_hash(conn, token_hash: str) -> Device | None:
             (token_hash,),
         )
         row = cur.fetchone()
+
     return Device(id=row[0], classroom_id=row[1]) if row else None
 
 def touch_device(conn, device_id: int) -> None:
@@ -211,6 +215,7 @@ def get_device_plans(conn, device: Device, start_at: int, end_at: int) -> list[P
             "AND starts_at >= to_timestamp(%s) AND starts_at < to_timestamp(%s) ORDER BY starts_at",
             (device.classroom_id, start_at, end_at),
         )
+
         return [Plan(classId=i, start_at=s, end_at=e) for i, s, e in cur.fetchall()]
 
 def check_device_slot(conn, device: Device, slot_id: int) -> bool:
@@ -220,6 +225,7 @@ def check_device_slot(conn, device: Device, slot_id: int) -> bool:
             "WHERE id = %s AND classroom_id = %s AND cancelled_at IS NULL AND starts_at <= now()",
             (slot_id, device.classroom_id),
         )
+
         return cur.fetchone() is not None
 
 def add_recording(conn, slot_id: int, device: Device, file_name: str, object_key: str,
@@ -245,6 +251,7 @@ def get_session_user(conn, token_hash: str) -> SessionUser | None:
             (token_hash,),
         )
         row = cur.fetchone()
+
     return SessionUser(id=row[0], is_admin=row[1], can_view_recordings=row[2]) if row else None
 
 def find_login_user(conn, google_sub: str, email: str) -> int | None:
@@ -256,6 +263,7 @@ def find_login_user(conn, google_sub: str, email: str) -> int | None:
             (google_sub, email),
         )
         row = cur.fetchone()
+
     return row[0] if row else None
 
 def claim_login(conn, user_id: int, google_sub: str, display_name: str | None) -> bool:
@@ -265,6 +273,7 @@ def claim_login(conn, user_id: int, google_sub: str, display_name: str | None) -
             "WHERE id = %s AND disabled_at IS NULL AND (google_sub IS NULL OR google_sub = %s)",
             (google_sub, display_name, user_id, google_sub),
         )
+        
         return cur.rowcount == 1
 
 def add_session(conn, token_hash: str, user_id: int, hours: int) -> None:
