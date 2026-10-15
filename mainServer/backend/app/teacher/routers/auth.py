@@ -18,8 +18,8 @@ from common.config import (
     GOOGLE_CLIENT_SECRET,
     GOOGLE_HD,
     GOOGLE_REDIRECT_URI,
-    GOOGLE_TOKEN_URL,
     GOOGLE_TOKEN_TIMEOUT,
+    GOOGLE_TOKEN_URL,
     LOGIN_REDIRECT_URL,
     OAUTH_STATE_MAX_AGE,
     SESSION_COOKIE,
@@ -37,9 +37,10 @@ from teacher.tx import as_user, run
 router = APIRouter()
 
 
-
 def _code_challenge(verifier: str) -> str:
-    return base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+    return (
+        base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+    )
 
 
 def _fetch_id_token_claims(code: str, verifier: str) -> dict:
@@ -88,8 +89,15 @@ async def login():
         "prompt": "select_account",
     }
     res = RedirectResponse(f"{GOOGLE_AUTH_URL}?{urlencode(params)}", status.HTTP_302_FOUND)
-    res.set_cookie(STATE_COOKIE, f"{state}.{nonce}.{verifier}", max_age=OAUTH_STATE_MAX_AGE,
-                   path=STATE_COOKIE_PATH, secure=True, httponly=True, samesite="lax")
+    res.set_cookie(
+        STATE_COOKIE,
+        f"{state}.{nonce}.{verifier}",
+        max_age=OAUTH_STATE_MAX_AGE,
+        path=STATE_COOKIE_PATH,
+        secure=True,
+        httponly=True,
+        samesite="lax",
+    )
     return res
 
 
@@ -102,7 +110,9 @@ async def callback(
     try:
         saved_state, nonce, verifier = (oauth_state or "").split(".")
     except ValueError:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Login session expired; try again") from None
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST, "Login session expired; try again"
+        ) from None
     if not code or not state or not secrets.compare_digest(state, saved_state):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid login state")
 
@@ -116,14 +126,25 @@ async def callback(
     if claims.get("hd") != GOOGLE_HD or claims.get("email_verified") is not True:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "This Google account is not allowed")
 
-    token = await run_in_threadpool(_start_session, claims["sub"], claims["email"].lower(), claims.get("name"))
+    token = await run_in_threadpool(
+        _start_session, claims["sub"], claims["email"].lower(), claims.get("name")
+    )
     if token is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "This Google account is not registered")
 
     res = RedirectResponse(LOGIN_REDIRECT_URL, status.HTTP_302_FOUND)
-    res.delete_cookie(STATE_COOKIE, path=STATE_COOKIE_PATH, secure=True, httponly=True, samesite="lax")
-    res.set_cookie(SESSION_COOKIE, token, max_age=SESSION_HOURS * 3600,
-                   path="/", secure=True, httponly=True, samesite="strict")
+    res.delete_cookie(
+        STATE_COOKIE, path=STATE_COOKIE_PATH, secure=True, httponly=True, samesite="lax"
+    )
+    res.set_cookie(
+        SESSION_COOKIE,
+        token,
+        max_age=SESSION_HOURS * 3600,
+        path="/",
+        secure=True,
+        httponly=True,
+        samesite="strict",
+    )
     return res
 
 

@@ -76,7 +76,11 @@ def send(day: date, lines: list[str], recipients: list[str]) -> None:
     msg["Subject"] = f"録画予定の変更（{day:%Y-%m-%d}）"
     msg["From"] = sender
     msg["To"] = sender
-    msg.set_content(f"{day:%Y-%m-%d} に、確定済みの録画予定が次のとおり変わりました。\n\n" + "\n".join(lines) + "\n")
+    msg.set_content(
+        f"{day:%Y-%m-%d} に、確定済みの録画予定が次のとおり変わりました。\n\n"
+        + "\n".join(lines)
+        + "\n"
+    )
 
     with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=SMTP_TIMEOUT) as smtp:
         if SMTP_STARTTLS:
@@ -88,8 +92,9 @@ def send(day: date, lines: list[str], recipients: list[str]) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--date", type=date.fromisoformat,
-                        default=datetime.now(TZ).date() - timedelta(days=1))
+    parser.add_argument(
+        "--date", type=date.fromisoformat, default=datetime.now(TZ).date() - timedelta(days=1)
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 

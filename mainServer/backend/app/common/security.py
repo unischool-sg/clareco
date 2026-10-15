@@ -1,7 +1,8 @@
+import hashlib
 import secrets
 import subprocess
 from pathlib import Path
-import hashlib
+
 import filetype
 
 from common.config import ALLOWED_VIDEO_TYPES, PROBE_TIMEOUT, TOKEN_BYTES
@@ -16,12 +17,25 @@ def check_video_type(path: Path) -> str:
 
 def probe_video(path: Path) -> None:
     result = subprocess.run(
-        ["ffprobe", "-v", "error", "-select_streams", "v:0",
-            "-show_entries", "stream=codec_type", "-of", "csv=p=0", str(path.resolve())],
-        capture_output=True, text=True, timeout=PROBE_TIMEOUT,
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "v:0",
+            "-show_entries",
+            "stream=codec_type",
+            "-of",
+            "csv=p=0",
+            str(path.resolve()),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=PROBE_TIMEOUT,
     )
     if result.returncode != 0 or "video" not in result.stdout:
         raise ValueError("Not a valid video file")
+
 
 def check_video_sha256(path: Path, expected_sha256: str) -> None:
     with open(path, "rb") as f:
@@ -35,12 +49,15 @@ def check_video(path: Path, expected_sha256: str) -> str:
     probe_video(path)
     return mime
 
+
 def gen_camera_token() -> str:
     token = secrets.token_urlsafe(TOKEN_BYTES)
     return token
 
+
 def gen_session_token() -> str:
     return secrets.token_urlsafe(TOKEN_BYTES)
+
 
 def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()

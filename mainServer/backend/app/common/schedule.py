@@ -1,9 +1,10 @@
 import calendar
 from collections import defaultdict
 from collections.abc import Iterator
-from datetime import date, datetime, time
+from datetime import date, datetime
+
 from common.config import TZ
-from common.models import TemplatePeriod, Slot
+from common.models import Slot, TemplatePeriod
 
 
 def create_month_schedule(templates: list[TemplatePeriod], year: int, month: int) -> Iterator[Slot]:

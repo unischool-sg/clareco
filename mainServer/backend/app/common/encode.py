@@ -19,19 +19,37 @@ def encode_video(video: Path) -> Path:
     output = Path(name)
     try:
         result = subprocess.run(
-            ["ffmpeg", "-nostdin", "-y", "-v", "error",
-             "-i", str(video.resolve()),
-             "-c:v", ENCODE_VIDEO_CODEC,
-             "-preset", ENCODE_PRESET,
-             "-crf", ENCODE_CRF,
-             "-pix_fmt", ENCODE_PIX_FMT,
-             "-color_primaries", ENCODE_COLOR,
-             "-color_trc", ENCODE_COLOR,
-             "-colorspace", ENCODE_COLOR,
-             "-c:a", "copy",
-             "-movflags", "+faststart",
-             str(output)],
-            capture_output=True, text=True, timeout=ENCODE_TIMEOUT,
+            [
+                "ffmpeg",
+                "-nostdin",
+                "-y",
+                "-v",
+                "error",
+                "-i",
+                str(video.resolve()),
+                "-c:v",
+                ENCODE_VIDEO_CODEC,
+                "-preset",
+                ENCODE_PRESET,
+                "-crf",
+                ENCODE_CRF,
+                "-pix_fmt",
+                ENCODE_PIX_FMT,
+                "-color_primaries",
+                ENCODE_COLOR,
+                "-color_trc",
+                ENCODE_COLOR,
+                "-colorspace",
+                ENCODE_COLOR,
+                "-c:a",
+                "copy",
+                "-movflags",
+                "+faststart",
+                str(output),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=ENCODE_TIMEOUT,
         )
 
         if result.returncode != 0:
@@ -40,5 +58,5 @@ def encode_video(video: Path) -> Path:
     except BaseException:
         output.unlink(missing_ok=True)
         raise
-    
+
     return output

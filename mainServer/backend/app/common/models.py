@@ -1,5 +1,6 @@
-from datetime import date, datetime, time
 from dataclasses import dataclass
+from datetime import date, datetime, time
+
 
 @dataclass(frozen=True)
 class TemplatePeriod:
@@ -22,6 +23,7 @@ class DraftSlot:
     starts_at: datetime
     ends_at: datetime
     title: str | None
+
 
 @dataclass(frozen=True)
 class Device:

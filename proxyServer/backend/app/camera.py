@@ -1,5 +1,6 @@
-import struct
 import socket
+import struct
+
 
 def reset_camera(visca_ip: str, visca_port: int) -> None:
     payload = bytes.fromhex("81 01 04 3F 02 01 FF")

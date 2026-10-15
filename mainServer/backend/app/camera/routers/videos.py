@@ -3,16 +3,17 @@ import tempfile
 from pathlib import Path
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Path as PathParam, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi import Path as PathParam
 from fastapi.concurrency import run_in_threadpool
 
 from camera.auth import verify_device
+from common.config import BUCKET_NAME, MAX_VIDEO_SIZE
 from common.db import add_recording, check_device_slot, read, write
+from common.encode import encode_video
 from common.models import Device
 from common.security import check_video
-from common.config import BUCKET_NAME, MAX_VIDEO_SIZE
 from common.storage import upload_video
-from common.encode import encode_video
 
 router = APIRouter()
 
@@ -25,8 +26,9 @@ async def save_body_to_tempfile(request: Request, max_size: int) -> Path:
             async for chunk in request.stream():
                 size += len(chunk)
                 if size > max_size:
-                    raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE,
-                                        f"Max size: {max_size} bytes")
+                    raise HTTPException(
+                        status.HTTP_413_CONTENT_TOO_LARGE, f"Max size: {max_size} bytes"
+                    )
                 f.write(chunk)
         except BaseException:
             f.close()
@@ -55,7 +57,9 @@ async def send_video(
     content_length: Annotated[int | None, Header(ge=0)] = None,
 ):
     if content_type != "video/mp4":
-        raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "Content-Type must be video/mp4")
+        raise HTTPException(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "Content-Type must be video/mp4"
+        )
     if content_length is not None and content_length > MAX_VIDEO_SIZE:
         raise HTTPException(status.HTTP_413_CONTENT_TOO_LARGE, f"Max size: {MAX_VIDEO_SIZE} bytes")
 
@@ -70,7 +74,9 @@ async def send_video(
         except ValueError as e:
             raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e)) from e
         if mime != "video/mp4":
-            raise HTTPException(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, f"Body is {mime}, not video/mp4")
+            raise HTTPException(
+                status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, f"Body is {mime}, not video/mp4"
+            )
 
         try:
             encoded_path = await run_in_threadpool(encode_video, tmp_path)

@@ -42,7 +42,9 @@ async def add(
     body: UserAddRequest,
     user: Annotated[SessionUser, Depends(require_admin)],
 ):
-    user_id = await run(as_user(user.id), add_user, body.email, body.is_admin, body.can_view_recordings)
+    user_id = await run(
+        as_user(user.id), add_user, body.email, body.is_admin, body.can_view_recordings
+    )
     return {"id": user_id}
 
 

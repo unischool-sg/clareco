@@ -1,13 +1,15 @@
+import os
+import subprocess
+import time
+from pathlib import Path
+
+from dotenv_fixed import load_dotenv
+
 from camera import reset_camera
 from marge import start_ffmpeg
 from plan import Plan, get_today_schedule
 from send import send_video
-from storage import remove_video, remove_dir_if_empty
-from pathlib import Path
-from dotenv_fixed import load_dotenv
-import subprocess
-import time
-import os
+from storage import remove_dir_if_empty, remove_video
 
 load_dotenv(dotenv_fixed_path=Path("../.env"))
 
@@ -28,8 +30,9 @@ VISCA_PORT = int(os.environ.get("VISCA_PORT"))
 
 def record_until_end(plan: Plan, plan_dir: Path) -> None:
     while (remaining := plan.end_at - int(time.time())) > 0:
-        process = start_ffmpeg(RTSP_URL, AUDIO_DEVICE, plan_dir,
-                               OUTPUT_FILE_PATTERN, SEGMENT_TIME, remaining)
+        process = start_ffmpeg(
+            RTSP_URL, AUDIO_DEVICE, plan_dir, OUTPUT_FILE_PATTERN, SEGMENT_TIME, remaining
+        )
         try:
             process.wait(timeout=remaining + 30)
         except subprocess.TimeoutExpired:
@@ -59,7 +62,7 @@ def send_videos_and_cleanup(plan: Plan, plan_dir: Path) -> None:
 while True:
     try:
         plans = get_today_schedule(API_TOKEN, VERIFY_PATH, API_HOST)
-        
+
     except Exception as e:
         print(f"failed to get schedule: {e}")
         time.sleep(POLL_INTERVAL)

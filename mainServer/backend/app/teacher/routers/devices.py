@@ -32,7 +32,9 @@ async def add(
     user: Annotated[SessionUser, Depends(require_admin)],
 ):
     token = gen_camera_token()
-    device_id = await run(as_user(user.id), add_device, body.classroom_id, body.name, hash_token(token))
+    device_id = await run(
+        as_user(user.id), add_device, body.classroom_id, body.name, hash_token(token)
+    )
     return {"id": device_id, "token": token}
 
 

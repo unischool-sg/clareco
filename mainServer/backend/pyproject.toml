@@ -17,3 +17,18 @@ dependencies = [
 
 [tool.uv.sources]
 python-dotenv-fixed = { git = "https://github.com/Okaz02/python-dotenv" }
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = ["migrations"]
+src = ["app"]
+output-format = "concise"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]

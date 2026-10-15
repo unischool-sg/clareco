@@ -1,7 +1,8 @@
-from datetime import datetime, time, timedelta
 import hashlib
 from pathlib import Path
+
 import requests
+
 
 def sha256_of(path: Path) -> str:
     file_hash = hashlib.sha256()
@@ -11,9 +12,10 @@ def sha256_of(path: Path) -> str:
 
     return file_hash.hexdigest()
 
-def send_video(token: str, classId: int, videoPath:Path, api_host: str, verify_path: Path):
+
+def send_video(token: str, classId: int, videoPath: Path, api_host: str, verify_path: Path):
     digest = sha256_of(videoPath)
-    
+
     with videoPath.open("rb") as video_file:
         response = requests.post(
             f"https://{api_host}/api/send_video/{classId}",
@@ -21,10 +23,10 @@ def send_video(token: str, classId: int, videoPath:Path, api_host: str, verify_p
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "video/mp4",
                 "X-Content-SHA256": digest,
-                },
+            },
             data=video_file,
             verify=verify_path,
             timeout=100,
         )
-    
+
     response.raise_for_status()

@@ -118,7 +118,9 @@ async def generate_draft(
     body: MonthRequest,
     user: Annotated[SessionUser, Depends(verify_session)],
 ):
-    added = await run(as_user(user.id), _generate_draft, body.classroom_id, body.year, body.month, user.id)
+    added = await run(
+        as_user(user.id), _generate_draft, body.classroom_id, body.year, body.month, user.id
+    )
     return {"added": added}
 
 
@@ -152,7 +154,9 @@ async def confirm(
     body: MonthRequest,
     user: Annotated[SessionUser, Depends(verify_session)],
 ):
-    confirmed = await run(as_user(user.id), confirm_month, body.classroom_id, body.year, body.month, user.id)
+    confirmed = await run(
+        as_user(user.id), confirm_month, body.classroom_id, body.year, body.month, user.id
+    )
     return {"confirmed": confirmed}
 
 
