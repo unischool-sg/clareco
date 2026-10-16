@@ -1,0 +1,40 @@
+/* 高さは罫線の本数で決める。幅は画像の縦横比から自動で決まる */
+.hole{
+    position:relative;
+    height:calc(var(--rule,32px)*var(--rule-count));
+    translate:0 var(--snap,0px);
+}
+.hole-a{
+    --rule-count:19;
+    aspect-ratio:1231/1216;
+    --mask:url(/assets/hole_a_mask.png);
+    --paper:url(/assets/hole_a_paper.webp);
+}
+.hole-b{
+    --rule-count:17;
+    aspect-ratio:1069/1088;
+    --mask:url(/assets/hole_b_mask.png);
+    --paper:url(/assets/hole_b_paper.webp);
+}
+.hole-c{
+    --rule-count:18;
+    aspect-ratio:1091/1152;
+    --mask:url(/assets/hole_c_mask.png);
+    --paper:url(/assets/hole_c_paper.webp);
+}
+.hole-photo{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    -webkit-mask:var(--mask) 0 0/100% 100%;
+    mask:var(--mask) 0 0/100% 100%;
+}
+.hole::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:var(--paper) 0 0/100% 100% no-repeat;
+    filter:var(--light);
+}

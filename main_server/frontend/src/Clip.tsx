@@ -1,5 +1,6 @@
-import type { CSSProperties, ReactNode } from "react";
 import "./Clip.css";
+
+import type { CSSProperties, ReactNode } from "react";
 
 type ClipProps = {
   children: ReactNode;

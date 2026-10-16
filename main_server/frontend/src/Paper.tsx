@@ -1,5 +1,6 @@
-import type { CSSProperties, ReactNode } from "react";
 import "./Paper.css";
+
+import type { CSSProperties, ReactNode } from "react";
 
 type PaperProps = {
   children: ReactNode;
@@ -9,7 +10,7 @@ type PaperProps = {
 
 export function Paper({ children, className, style }: PaperProps) {
   return (
-    <div className={className ? `paper ${className}` : "paper"} style={style}>
+    <div className={className !== undefined && className !== "" ? `paper ${className}` : "paper"} style={style}>
       {children}
     </div>
   );
