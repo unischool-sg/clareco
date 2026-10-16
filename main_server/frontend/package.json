@@ -11,8 +11,10 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@fullcalendar/react": "^7.1.2",
     "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react-dom": "^19.2.8",
+    "temporal-polyfill": "^1.0.6"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "^5.27.2",
