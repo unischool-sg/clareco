@@ -1,0 +1,75 @@
+.clip{
+    --h:44px;
+    position:relative;
+    isolation:isolate;
+    display:grid;
+    grid-template-columns:calc(var(--h)*16/88) 1fr calc(var(--h)*84/88) 1fr calc(var(--h)*17/88);
+    height:var(--h);
+    filter:drop-shadow(0 3px 2px rgba(0,0,0,.22))};
+.clip-part{
+    position:relative;
+    grid-row:1;
+    z-index:1;
+    filter:var(--light);
+}
+.clip-part::before{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:calc(var(--h)*170/88);
+    background:var(--img) 0 0/100% 100% no-repeat
+}
+.clip-l{
+    grid-column:1;
+    --img:url(./assets/clip/olive_l.png)
+}
+.clip-lf{
+    grid-column:2;
+    --img:url(./assets/clip/olive_lf.png)
+}
+.clip-c{
+    grid-column:3;
+    --img:url(./assets/clip/olive_c.png)
+}
+.clip-rf{
+    grid-column:4;
+    --img:url(./assets/clip/olive_rf.png);
+}
+.clip-r{
+    grid-column:5;
+    --img:url(./assets/clip/olive_r.png);
+}
+.clip-lf::before,.clip-rf::before{
+    left:-1px;
+    right:-1px;
+}
+.clip-wire{
+    grid-column:3;
+    z-index:0;
+    --img:url(./assets/clip/wire.png);
+}
+.clip-c::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:calc(var(--h)*70/88);
+    height:calc(var(--h)*170/88);
+    background:url(./assets/clip/wire.png) 0 0/100% 100% no-repeat;
+    transform:scaleY(-1)
+}
+.clip-label{
+    grid-column:1/-1;
+    grid-row:1;
+    z-index:2;
+    padding:0 calc(var(--h)*16/44) calc(var(--h)*6/44);
+    line-height:calc(var(--h)*38/44);
+    font-size:calc(var(--h)*15/44);
+    font-weight:700;
+    letter-spacing:-.04em;
+    color:#fff;
+    text-align:center;
+    white-space:nowrap
+}
