@@ -5,7 +5,8 @@
     display:grid;
     grid-template-columns:calc(var(--h)*16/88) 1fr calc(var(--h)*84/88) 1fr calc(var(--h)*17/88);
     height:var(--h);
-    filter:drop-shadow(0 3px 2px rgba(0,0,0,.22))};
+    filter:drop-shadow(0 3px 2px rgba(0,0,0,.22));
+}
 .clip-part{
     position:relative;
     grid-row:1;
