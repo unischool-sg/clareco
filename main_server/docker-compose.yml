@@ -41,3 +41,10 @@ services:
     environment: *internal
     ports:
       - "${TEACHER_PORT:-127.0.0.1:8001}:8001"
+
+  # 画面（ビルド済みの静的ファイル）。手前のリバースプロキシからだけ呼ぶ
+  frontend:
+    build: frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-127.0.0.1:8002}:8080"

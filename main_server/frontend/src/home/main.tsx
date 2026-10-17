@@ -3,9 +3,9 @@ import './index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { Clip } from './Clip.tsx'
-import { Hole } from './Hole.tsx'
-import { Paper } from './Paper.tsx'
+import { Clip } from '../Clip/Clip.tsx'
+import { Hole } from '../Hole/Hole.tsx'
+import { Paper } from '../Paper/Paper.tsx'
 
 const root = document.getElementById('root')
 if (root === null) {

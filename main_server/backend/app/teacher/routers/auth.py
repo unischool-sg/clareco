@@ -43,6 +43,17 @@ def _code_challenge(verifier: str) -> str:
     )
 
 
+def _safe_next(next_url: str | None) -> str:
+    if (
+        not next_url
+        or not next_url.startswith("/")
+        or next_url.startswith("//")
+        or any(c == "\\" or not c.isprintable() for c in next_url)
+    ):
+        return LOGIN_REDIRECT_URL
+    return next_url
+
+
 def _fetch_id_token_claims(code: str, verifier: str) -> dict:
     res = requests.post(
         GOOGLE_TOKEN_URL,
@@ -74,8 +85,9 @@ def _start_session(google_sub: str, email: str, display_name: str | None) -> str
 
 
 @router.get("/api/auth/login")
-async def login():
+async def login(next: str | None = None):
     state, nonce, verifier = (secrets.token_urlsafe(TOKEN_BYTES) for _ in range(3))
+    next_b64 = base64.urlsafe_b64encode(_safe_next(next).encode()).decode()
     params = {
         "client_id": GOOGLE_CLIENT_ID,
         "redirect_uri": GOOGLE_REDIRECT_URI,
@@ -91,7 +103,7 @@ async def login():
     res = RedirectResponse(f"{GOOGLE_AUTH_URL}?{urlencode(params)}", status.HTTP_302_FOUND)
     res.set_cookie(
         STATE_COOKIE,
-        f"{state}.{nonce}.{verifier}",
+        f"{state}.{nonce}.{verifier}.{next_b64}",
         max_age=OAUTH_STATE_MAX_AGE,
         path=STATE_COOKIE_PATH,
         secure=True,
@@ -108,7 +120,8 @@ async def callback(
     oauth_state: Annotated[str | None, Cookie(alias=STATE_COOKIE)] = None,
 ):
     try:
-        saved_state, nonce, verifier = (oauth_state or "").split(".")
+        saved_state, nonce, verifier, next_b64 = (oauth_state or "").split(".")
+        next_url = _safe_next(base64.urlsafe_b64decode(next_b64).decode())
     except ValueError:
         raise HTTPException(
             status.HTTP_400_BAD_REQUEST, "Login session expired; try again"
@@ -132,7 +145,7 @@ async def callback(
     if token is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "This Google account is not registered")
 
-    res = RedirectResponse(LOGIN_REDIRECT_URL, status.HTTP_302_FOUND)
+    res = RedirectResponse(next_url, status.HTTP_302_FOUND)
     res.delete_cookie(
         STATE_COOKIE, path=STATE_COOKIE_PATH, secure=True, httponly=True, samesite="lax"
     )

@@ -1,0 +1,29 @@
+@font-face{font-family:'Outfit';font-weight:600;font-display:swap;src:url(/assets/fonts/outfit-600.woff2) format('woff2')}
+
+:root{
+  --olive:#608046;
+  --ink:#2F2E2A;
+  --desk:#C5B093;
+  --light:brightness(.93) sepia(.1);
+}
+*{
+  box-sizing:border-box;
+}
+body{
+  margin:0;
+  background:var(--desk) url(/assets/desk_tile.webp) 0 0/1720px 1720px;
+  font-family:'LINE Seed JP',sans-serif;
+  color:var(--ink);
+}
+
+main{
+  display:flex;
+  height:100svh;
+  padding:48px 24px;
+}
+.login-paper{
+  display:flex;
+  flex:1;
+  max-width:1120px;
+  margin:0 auto;
+}
