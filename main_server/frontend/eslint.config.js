@@ -11,9 +11,6 @@ import tseslint from 'typescript-eslint'
 export default defineConfig([
   globalIgnores(['dist', 'node_modules', 'coverage']),
 
-  // ---------------------------------------------------------------------------
-  // TypeScript / React（アプリ本体）
-  // ---------------------------------------------------------------------------
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -42,7 +39,6 @@ export default defineConfig([
       reportUnusedInlineConfigs: 'error',
     },
     rules: {
-      // --- 一般的なバグ防止 ---------------------------------------------------
       'array-callback-return': ['error', { checkForEach: true }],
       'no-await-in-loop': 'warn',
       'no-constructor-return': 'error',
@@ -53,7 +49,6 @@ export default defineConfig([
       'no-unreachable-loop': 'error',
       'require-atomic-updates': 'error',
 
-      // --- 書き方・可読性 -----------------------------------------------------
       curly: ['error', 'all'],
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'default-case-last': 'error',
@@ -62,7 +57,7 @@ export default defineConfig([
       'no-debugger': 'error',
       'no-else-return': ['error', { allowElseIf: false }],
       'no-eval': 'error',
-      'no-implied-eval': 'off', // TS 版を使用
+      'no-implied-eval': 'off',
       'no-lonely-if': 'error',
       'no-nested-ternary': 'error',
       'no-new-func': 'error',
@@ -81,7 +76,6 @@ export default defineConfig([
       radix: 'error',
       yoda: 'error',
 
-      // --- TypeScript ---------------------------------------------------------
       '@typescript-eslint/consistent-type-imports': [
         'error',
         { prefer: 'type-imports', fixStyle: 'separate-type-imports' },
@@ -93,7 +87,7 @@ export default defineConfig([
       '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: true }],
       '@typescript-eslint/no-misused-promises': [
         'error',
-        { checksVoidReturn: { attributes: false } }, // onClick={async () => ...} を許可
+        { checksVoidReturn: { attributes: false } },
       ],
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -128,26 +122,19 @@ export default defineConfig([
         { selector: 'typeLike', format: ['PascalCase'] },
         { selector: 'enumMember', format: ['PascalCase', 'UPPER_CASE'] },
         { selector: 'import', format: null },
-        // オブジェクトのキー（API レスポンス、CSS、HTTP ヘッダ等）は縛らない
         { selector: ['objectLiteralProperty', 'typeProperty'], format: null },
       ],
 
-      // --- React --------------------------------------------------------------
-      // hooks 系は公式 eslint-plugin-react-hooks に任せる（重複報告を防ぐ）
       '@eslint-react/rules-of-hooks': 'off',
       '@eslint-react/purity': 'off',
       '@eslint-react/set-state-in-effect': 'off',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
-      // --- import 並び替え（--fix で自動整列） --------------------------------
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
     },
   },
 
-  // ---------------------------------------------------------------------------
-  // 設定ファイル類（Node 実行）
-  // ---------------------------------------------------------------------------
   {
     files: ['*.config.{js,ts}', 'vite.config.ts'],
     languageOptions: {
@@ -159,9 +146,6 @@ export default defineConfig([
     },
   },
 
-  // ---------------------------------------------------------------------------
-  // 素の JS ファイル（型情報なし）
-  // ---------------------------------------------------------------------------
   {
     files: ['**/*.{js,mjs,cjs}'],
     extends: [js.configs.recommended],

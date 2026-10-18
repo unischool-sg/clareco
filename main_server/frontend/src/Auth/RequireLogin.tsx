@@ -7,11 +7,9 @@ type Status = "checking" | "ok" | "error";
 
 type Props = {
   children: ReactNode;
-  /** 確認中に表示するもの */
   fallback?: ReactNode;
 };
 
-/** ログインしていなければログインページへ飛ばし、ログイン後にこのページへ戻す */
 export function RequireLogin({ children, fallback = null }: Props) {
   const [status, setStatus] = useState<Status>("checking");
 
@@ -24,7 +22,6 @@ export function RequireLogin({ children, fallback = null }: Props) {
           location.replace(`${LOGIN_PAGE}?${new URLSearchParams({ next }).toString()}`);
           return;
         }
-        // /api がバックエンドに届かず index.html が 200 で返る場合をログイン済みと誤認しない
         const isJson = res.headers.get("content-type")?.includes("application/json") === true;
         setStatus(res.ok && isJson ? "ok" : "error");
       })

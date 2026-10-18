@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 from datetime import date, datetime, time
 
@@ -85,3 +86,10 @@ class Recording:
     file_name: str
     size_bytes: int
     uploaded_at: datetime
+
+
+@dataclass
+class VideoStream:
+    chunks: Iterator[bytes]
+    content_length: int
+    content_range: str | None

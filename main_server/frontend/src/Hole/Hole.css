@@ -1,4 +1,3 @@
-/* 高さは罫線の本数で決める。幅は画像の縦横比から自動で決まる */
 .hole{
     position:relative;
     height:calc(var(--rule,32px)*var(--rule-count));

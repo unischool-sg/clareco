@@ -21,7 +21,6 @@ services:
     command: >
       uvicorn camera.main:app --host 0.0.0.0 --port 8443
       --ssl-keyfile /certs/server.key --ssl-certfile /certs/server.pem
-    # camera.env で DB のユーザーを録画機用（camera_app）に差し替える
     env_file: [backend/app/.env, backend/camera.env]
     environment: &internal
       DB_HOST: db
@@ -33,7 +32,6 @@ services:
     ports:
       - "${CAMERA_PORT:-8443}:8443"
 
-  # 教職員用。手前のリバースプロキシからだけ呼ぶ
   teacher:
     <<: *backend
     command: uvicorn teacher.main:app --host 0.0.0.0 --port 8001
@@ -42,7 +40,6 @@ services:
     ports:
       - "${TEACHER_PORT:-127.0.0.1:8001}:8001"
 
-  # 画面（ビルド済みの静的ファイル）。手前のリバースプロキシからだけ呼ぶ
   frontend:
     build: frontend
     restart: unless-stopped

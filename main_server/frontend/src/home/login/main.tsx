@@ -11,6 +11,8 @@ if (root === null) {
   throw new Error('#root not found')
 }
 
+const next = new URLSearchParams(location.search).get('next') ?? '/'
+
 createRoot(root).render(
   <StrictMode>
     <main>
@@ -21,7 +23,7 @@ createRoot(root).render(
             ClassRecall
             </h1>
           <p className="lead">学校の Google アカウントでログインしてください。</p>
-          <GoogleSignInButton />
+          <GoogleSignInButton redirectTo={next} />
         </section>
       </Paper>
     </main>

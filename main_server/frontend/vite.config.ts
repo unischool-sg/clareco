@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         home: resolve(import.meta.dirname, 'index.html'),
         login: resolve(import.meta.dirname, 'login/index.html'),
+        console: resolve(import.meta.dirname, 'console/index.html'),
       },
     },
   },
