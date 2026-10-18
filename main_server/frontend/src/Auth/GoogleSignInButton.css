@@ -14,16 +14,16 @@
   cursor:pointer;
 }
 .google-button.is-light{
-  background:#FFFFFF;
-  color:#1F1F1F;
-  box-shadow:inset 0 0 0 1px #747775;
+  background:var(--white);
+  color:var(--google-text);
+  box-shadow:inset 0 0 0 1px var(--google-light-border);
 }
 .google-button.is-dark{
-  background:#131314;
-  color:#E3E3E3;
-  box-shadow:inset 0 0 0 1px #8E918F;
+  background:var(--google-dark-bg);
+  color:var(--google-dark-text);
+  box-shadow:inset 0 0 0 1px var(--google-dark-border);
 }
 .google-button.is-neutral{
-  background:#F2F2F2;
-  color:#1F1F1F;
+  background:var(--google-neutral-bg);
+  color:var(--google-text);
 }

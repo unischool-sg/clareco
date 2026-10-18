@@ -1,9 +1,6 @@
 @font-face{font-family:'Outfit';font-weight:600;font-display:swap;src:url(/assets/fonts/outfit-600.woff2) format('woff2')}
 
 :root{
-  --olive:#608046;
-  --ink:#2F2E2A;
-  --desk:#C5B093;
   --light:brightness(.93) sepia(.1);
 }
 *{

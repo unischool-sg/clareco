@@ -1,3 +1,4 @@
+import '../../colors.css'
 import '@fullcalendar/react/skeleton.css'
 import './base.css'
 import './schedule.css'
@@ -33,7 +34,7 @@ function SchedulePage() {
   }, [])
 
   if (error) {
-    return <p role="alert">教室の一覧を読み込めませんでした。ページを再読み込みしてください。</p>
+    return <p>教室の一覧を読み込めませんでした。ページを再読み込みしてください。</p>
   }
   if (classrooms === null) {
     return null

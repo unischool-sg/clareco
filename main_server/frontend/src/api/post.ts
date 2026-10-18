@@ -1,4 +1,3 @@
-// teacher API はどれも POST で JSON を送り、JSON を返す。各 API の関数からだけ使う
 export async function postJson<T>(url: string, body: unknown = {}, signal?: AbortSignal): Promise<T> {
   const res = await fetch(url, {
     method: 'POST',

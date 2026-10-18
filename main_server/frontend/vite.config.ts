@@ -5,8 +5,6 @@ import { type Connect, defineConfig, type Plugin } from 'vite'
 
 const PAGES = ['login', 'console']
 
-// `/console` のような末尾スラッシュなしのアクセスは SPA フォールバックで
-// ルートの index.html (home) が返ってしまうため、`/console/` へリダイレクトする
 function trailingSlashRedirect(): Plugin {
   const middleware: Connect.NextHandleFunction = (req, res, next) => {
     const [pathname, query] = (req.url ?? '').split(/\?(.*)/s)
@@ -29,14 +27,8 @@ function trailingSlashRedirect(): Plugin {
   }
 }
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), trailingSlashRedirect()],
-  server: {
-    proxy: {
-      '/api': process.env.API_URL ?? 'http://localhost:8001',
-    },
-  },
   build: {
     rollupOptions: {
       input: {

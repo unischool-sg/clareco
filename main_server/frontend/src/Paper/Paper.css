@@ -3,14 +3,14 @@
     position:relative;
     isolation:isolate;
     border-radius:2px;
-    box-shadow:0 1px 1px rgba(60,40,20,.25),0 2px 6px rgba(60,40,20,.18),0 14px 32px rgba(60,40,20,.22)
+    box-shadow:0 1px 1px var(--paper-shadow-near),0 2px 6px var(--paper-shadow-mid),0 14px 32px var(--paper-shadow-far)
 }
 .paper::after{
     content:"";
     position:absolute;
     inset:0;
     z-index:-1;
-    background:#FCFCFB url(/assets/paper_tile.webp) 0 0/640px 768px;
+    background:var(--paper-base) url(/assets/paper_tile.webp) 0 0/640px 768px;
     border-radius:2px;filter:var(--light)
 }
 .paper::before{
@@ -20,7 +20,7 @@
     right:0;
     top:0;
     height:46px;
-    background:#FDFDFD;border-radius:2px 2px 0 0;filter:var(--light)
+    background:var(--paper-top);border-radius:2px 2px 0 0;filter:var(--light)
 }
 @media (max-width:760px){
 .paper{

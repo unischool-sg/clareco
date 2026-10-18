@@ -40,13 +40,10 @@ const toEvent = (kind: 'confirmed' | 'draft') => (s: ScheduleSlot): EventInput =
 
 type ScheduleCalendarProps = {
   classroomId: number
-  // ツールバーの左端に置くもの（教室の選択など）
   toolbarStart: ReactNode
 }
 
-// 前後の移動・期間の見出し・週と月の切り替えは FullCalendar のツールバーに任せる
 export function ScheduleCalendar({ classroomId, toolbarStart }: ScheduleCalendarProps) {
-  // 表示中の期間のコマを取ってくる。期間は FullCalendar が移動のたびに渡してくる
   const eventSources = useMemo(
     () => [
       async (info: EventSourceFuncInfo) => (await getConfirmedSlots(toRange(classroomId, info))).map(toEvent('confirmed')),
@@ -55,8 +52,6 @@ export function ScheduleCalendar({ classroomId, toolbarStart }: ScheduleCalendar
     [classroomId],
   )
 
-  // 週の表示の時間帯は 8:00〜16:00 を基本に、表示中のコマがすべて入るまで広げる。
-  // 固定にすると、範囲の外にある確定したコマが画面に出ないまま録画されることになる
   const [firstHour, setFirstHour] = useState(8)
   const [lastHour, setLastHour] = useState(16)
   const fitHours = (events: EventApi[]) => {
@@ -93,7 +88,6 @@ export function ScheduleCalendar({ classroomId, toolbarStart }: ScheduleCalendar
         return info.isSelected ? 'view-button is-selected' : 'view-button'
       }}
       views={{
-        // 時間の目盛りに沿って並べる
         timeGridWeek: {
           allDaySlot: false,
           slotMinTime: hhmm(firstHour),
@@ -122,9 +116,7 @@ export function ScheduleCalendar({ classroomId, toolbarStart }: ScheduleCalendar
             </>
           ),
         },
-        // 日ごとにコマを縦に並べる（「+n件」に畳む設定は入れない。畳むと録画されるコマが見えなくなる）
         dayGridMonth: {
-          viewClass: 'is-month month-sheet',
           showNonCurrentDates: false,
           fixedWeekCount: false,
           eventDisplay: 'block',
@@ -139,10 +131,10 @@ export function ScheduleCalendar({ classroomId, toolbarStart }: ScheduleCalendar
           ),
         },
       }}
+      viewClass={(info) => (info.view.type === 'dayGridMonth' ? 'is-month month-sheet' : '')}
       locale={jaLocale}
       timeZone={TZ}
       firstDay={1}
-      weekends={false}
       height="auto"
       eventSources={eventSources}
       eventsSet={fitHours}

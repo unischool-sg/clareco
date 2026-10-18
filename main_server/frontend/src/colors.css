@@ -1,0 +1,36 @@
+:root{
+  --white:#FFFFFF;
+  --desk:#C5B093;
+  --olive:#608046;
+  --olive-dark:#304023;
+  --ink:#2F2E2A;
+  --ink-soft:#6B675F;
+  --ink-hover:rgba(47,46,42,.06);
+  --pencil:#8C877E;
+  --cancelled:#9A958C;
+  --notice:#EAE4DA;
+  --paper-color:#F4F0EA;
+  --paper-base:#FCFCFB;
+  --paper-top:#FDFDFD;
+  --paper-shadow-near:rgba(60,40,20,.25);
+  --paper-shadow-mid:rgba(60,40,20,.18);
+  --paper-shadow-far:rgba(60,40,20,.22);
+  --rule-color:#D1CEC8;
+  --edge:#D6D1C9;
+  --band-line-1:#F8F8F8;
+  --band-line-2:#E3E3E3;
+  --band-line-3:#DEDEDE;
+  --band-line-4:#F4F4F4;
+  --band-line-narrow-1:#F7F7F7;
+  --band-line-narrow-2:#E1E1E1;
+  --band-bottom:#FCFCFC;
+  --sticky-shadow:rgba(40,30,15,.22);
+  --sticky-lift:rgba(40,30,15,.3);
+  --clip-shadow:rgba(0,0,0,.22);
+  --google-text:#1F1F1F;
+  --google-light-border:#747775;
+  --google-dark-bg:#131314;
+  --google-dark-text:#E3E3E3;
+  --google-dark-border:#8E918F;
+  --google-neutral-bg:#F2F2F2;
+}

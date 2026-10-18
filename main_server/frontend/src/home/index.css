@@ -1,9 +1,6 @@
 @font-face{font-family:'Outfit';font-weight:600;font-display:swap;src:url(/assets/fonts/outfit-600.woff2) format('woff2')}
 
 :root{
-  --olive:#608046;
-  --ink:#2F2E2A;
-  --desk:#C5B093;
   --light:brightness(.93) sepia(.1);
 }
 *{
@@ -35,7 +32,7 @@ body{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(#FDFDFD 47px,#F8F8F8 47px 47.5px,#E3E3E3 47.5px 48px,#DEDEDE 48px 48.5px,#F4F4F4 48.5px 49px,#FCFCFC 49px);
+  background:linear-gradient(var(--paper-top) 47px,var(--band-line-1) 47px 47.5px,var(--band-line-2) 47.5px 48px,var(--band-line-3) 48px 48.5px,var(--band-line-4) 48.5px 49px,var(--band-bottom) 49px);
   border-radius:2px 2px 0 0;
   filter:var(--light);
 }
@@ -131,7 +128,7 @@ h2{
 .start-button{
   vertical-align:top;
   background:var(--olive);
-  color:#fff;
+  color:var(--white);
   font:inherit;
   font-size:18px;
   font-weight:700;
@@ -154,7 +151,7 @@ h2{
     padding:0 16px;
   }
   .tab-bar::before{
-    background:linear-gradient(#FDFDFD 55.75px,#F7F7F7 55.75px 56px,#E1E1E1 56px 56.5px,#F7F7F7 56.5px 56.75px,#FCFCFC 56.75px);
+    background:linear-gradient(var(--paper-top) 55.75px,var(--band-line-narrow-1) 55.75px 56px,var(--band-line-narrow-2) 56px 56.5px,var(--band-line-narrow-1) 56.5px 56.75px,var(--band-bottom) 56.75px);
   }
   .tab{
     min-width:0;
