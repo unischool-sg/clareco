@@ -1,0 +1,64 @@
+@font-face{font-family:'Outfit';font-weight:600;font-display:swap;src:url(/assets/fonts/outfit-600.woff2) format('woff2')}
+
+/* ホーム以外の画面の土台。ホームと同じく机の上に紙を1枚置く（#root が紙）。
+   紙の素材には32px間隔の罫線が入っている（紙の上端から16px, 48px, 80px…）。画面の要素はこの罫線に合わせて置く */
+:root{
+  --desk:#C5B093;
+  --light:brightness(.93) sepia(.1);   /* ホームの紙にかけているフィルタ */
+  --olive:#608046;
+  --olive-dark:#304023;
+  --ink:#2F2E2A;
+  --ink-soft:#6B675F;
+  --paper:#F4F0EA;   /* 紙の素材にフィルタをかけた後の色 */
+  --rule:#D1CEC8;   /* ホームの罫線の色 */
+  --edge:#D6D1C9;   /* ホームのタブの帯の下端の線 */
+}
+*{
+  box-sizing:border-box;
+}
+body{
+  margin:0;
+  padding:0 24px;
+  background:var(--desk) url(/assets/desk_tile.webp) 0 0/1720px 1720px;
+  font-family:'LINE Seed JP',sans-serif;
+  font-size:14px;
+  color:var(--ink);
+}
+#root{   /* ホームの .page と同じ紙 */
+  position:relative;
+  max-width:1120px;
+  margin:48px auto;
+  isolation:isolate;
+  border-radius:2px;
+  box-shadow:0 1px 1px rgba(60,40,20,.25),0 2px 6px rgba(60,40,20,.18),0 14px 32px rgba(60,40,20,.22);
+}
+#root::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:#FCFCFB url(/assets/paper_tile.webp) 0 0/640px 768px;
+  border-radius:2px;
+  filter:var(--light);
+}
+a{
+  color:inherit;
+}
+:focus-visible{
+  outline:2px solid var(--olive);
+  outline-offset:2px;
+}
+.button{
+  border:0;
+  border-radius:4px;
+  padding:8px 20px;
+  background:var(--olive);
+  color:#fff;
+  font:inherit;
+  font-weight:700;
+  line-height:20px;
+  cursor:pointer;
+}
+.button:active{
+  background:var(--olive-dark);
+}
