@@ -1,9 +1,10 @@
-import type { EventApi, EventInput, EventSourceFuncInfo } from '@fullcalendar/react'
+import type { CalendarRef, DateSelectInfo, EventApi, EventInput, EventSourceFuncInfo } from '@fullcalendar/react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/react/daygrid'
+import interactionPlugin from '@fullcalendar/react/interaction'
 import jaLocale from '@fullcalendar/react/locales/ja'
 import timeGridPlugin from '@fullcalendar/react/timegrid'
-import { type ReactNode, useMemo, useState } from 'react'
+import { type ReactNode, type Ref, useMemo, useState } from 'react'
 import { Temporal } from 'temporal-polyfill'
 
 import { getConfirmedSlots, getDraftSlots, type ScheduleSlot } from '../api/schedule.ts'
@@ -39,13 +40,15 @@ const toEvent = (kind: 'confirmed' | 'draft') => (s: ScheduleSlot): EventInput =
 })
 
 type ScheduleCalendarProps = {
-  classroomId: number
+  classroomId: number | null
   toolbarStart: ReactNode
+  calendarRef: Ref<CalendarRef>
+  onSelect: (info: DateSelectInfo) => void
 }
 
-export function ScheduleCalendar({ classroomId, toolbarStart }: ScheduleCalendarProps) {
+export function ScheduleCalendar({ classroomId, toolbarStart, calendarRef, onSelect }: ScheduleCalendarProps) {
   const eventSources = useMemo(
-    () => [
+    () => classroomId === null ? [] : [
       async (info: EventSourceFuncInfo) => (await getConfirmedSlots(toRange(classroomId, info))).map(toEvent('confirmed')),
       async (info: EventSourceFuncInfo) => (await getDraftSlots(toRange(classroomId, info))).map(toEvent('draft')),
     ],
@@ -61,7 +64,10 @@ export function ScheduleCalendar({ classroomId, toolbarStart }: ScheduleCalendar
 
   return (
     <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin]}
+      ref={calendarRef}
+      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+      selectable={classroomId !== null}
+      select={onSelect}
       initialView="timeGridWeek"
       headerToolbar={{ start: 'room', center: 'prev title next', end: 'timeGridWeek,dayGridMonth legend' }}
       toolbarElements={{

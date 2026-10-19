@@ -1,0 +1,15 @@
+.recording-day{
+  margin-bottom:24px;
+}
+.recording-files{
+  margin:12px 0 0;
+  padding:0;
+  list-style:none;
+}
+.recording-files video{
+  display:block;
+  width:100%;
+  max-width:720px;
+  margin:6px 0 16px;
+  background:var(--ink);
+}

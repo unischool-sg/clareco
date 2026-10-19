@@ -1,0 +1,32 @@
+.ruled h3{
+  margin:0;
+  font-size:16px;
+}
+.device-status::before{
+  content:"";
+  display:inline-block;
+  width:8px;
+  height:8px;
+  margin-right:6px;
+  border-radius:50%;
+  background:var(--pencil);
+}
+.device-status.is-online::before{
+  background:var(--olive);
+}
+.device-history{
+  margin-top:8px;
+  color:var(--cancelled);
+  font-size:13px;
+}
+.token-box{
+  margin-top:12px;
+  padding:12px 16px;
+  border:1.5px dashed var(--pencil);
+  background:var(--paper-color);
+}
+.token-box code{
+  display:block;
+  overflow-wrap:anywhere;
+  user-select:all;
+}

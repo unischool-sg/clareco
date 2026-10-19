@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { type Connect, defineConfig, type Plugin } from 'vite'
 
-const PAGES = ['login', 'console']
+const PAGES = ['login', 'console', 'console/recordings', 'console/devices', 'console/users']
 
 function trailingSlashRedirect(): Plugin {
   const middleware: Connect.NextHandleFunction = (req, res, next) => {

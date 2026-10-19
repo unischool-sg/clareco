@@ -1,0 +1,27 @@
+.sheet{
+  width:100%;
+  border-collapse:collapse;
+}
+.sheet th{
+  padding:0 12px 8px;
+  box-shadow:inset 0 -1px var(--ink);
+  color:var(--ink-soft);
+  font-size:13px;
+  font-weight:400;
+  text-align:left;
+  white-space:nowrap;
+}
+.sheet td{
+  padding:10px 12px;
+  box-shadow:inset 0 -1px var(--rule-color);
+}
+.sheet .is-center{
+  text-align:center;
+}
+.sheet .is-end{
+  text-align:right;
+  white-space:nowrap;
+}
+.is-off{
+  color:var(--cancelled);
+}

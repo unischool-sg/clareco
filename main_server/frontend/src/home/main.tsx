@@ -4,9 +4,9 @@ import './index.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { Clip } from '../Clip/Clip.tsx'
 import { Hole } from '../Hole/Hole.tsx'
 import { Paper } from '../Paper/Paper.tsx'
+import { Tab, TabBar } from '../TabBar/TabBar.tsx'
 
 const root = document.getElementById('root')
 if (root === null) {
@@ -17,11 +17,11 @@ createRoot(root).render(
   <StrictMode>
     <main>
       <Paper>
-        <nav className="tab-bar">
-          <button type="button" className="tab" aria-current="page"><Clip>ホーム</Clip></button>
-          <button type="button" className="tab">授業</button>
-          <button type="button" className="tab">使い方</button>
-        </nav>
+        <TabBar>
+          <Tab href="/">ホーム</Tab>
+          <Tab href="/login">ログイン</Tab>
+          <Tab href="/howtouse">使い方</Tab>
+        </TabBar>
         <section className="section hero">
           <div className="section-text">
             <h1><img className="logo" src="/assets/clareco.svg" alt="" />ClassRecall</h1>
